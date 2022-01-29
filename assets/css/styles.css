@@ -1,0 +1,22 @@
+#img-icon {
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+}
+
+#icon-approval {
+    background-image: url('../images/approved.png');
+}
+
+#icon-rejection {
+    background-image: url('../images/rejected.png');
+}
+
+#icon-approval,
+#icon-rejection {
+    background-size: cover;
+    width: 35px;
+    height: 35px;
+    border: 0;
+    cursor: pointer;
+}
