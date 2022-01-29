@@ -52,54 +52,68 @@ $(document).ready(function (e) {
 
 function actionImage(e, id, actionType) {
     e.preventDefault;
-
-    // if (actionType == 'approval') {
+    var type = 0;
 
     console.log([id, actionType]);
 
-    $.ajax({
-        url: "helpers/ajaxupload.php",
-        type: "POST",
-        data: {
-            id,
-            actionType
-        },
-        cache: false,
-        beforeSend: function () {
-
-        },
-        success: function (data) {
-            if (data == 'invalid') {
-                // invalid file format.
-                console.log(data);
-                $("#err").html("Invalid File !").fadeIn();
-            } else {
-
-                $("#message").html(`
-                  <div class="alert alert-success" role="alert"> ${data} </div>
-              `);
-
-                // data = JSON.parse(data);
-
-            }
-        },
-        error: function (xhr, status, error) {
-            var errorMessage = xhr.status + ': ' + xhr.statusText
-            // alert('Error - ' + errorMessage);
-            $("#message").html(`
-          <div class="alert alert-danger" role="alert">Error - ${errorMessage} </div>
-        `);
-        }
-
-    });
-
-
-    // };
-
+    if (actionType == 'approval') {
+        type = actionType;
+        newType = 'rejection';
+    }
     if (actionType == 'rejection') {
-        console.log([id, actionType]);
-    };
+        type = actionType;
+        newType = 'approval';
+    }
 
+    if (type) {
+        $.ajax({
+            url: "helpers/ajaxupload.php",
+            type: "POST",
+            data: {
+                id,
+                actionType
+            },
+            cache: false,
+            beforeSend: function () {
+    
+            },
+            success: function (data) {
+                if (data == 'invalid') {
+                    // invalid file format.
+                    $("#message").html(`
+                        <div class="alert alert-danger" role="alert">Invalid File ! "${data} "</div>
+                    `);
+                } else {
+                    $("#message").html(`
+                      <div class="alert alert-success" role="alert"> ${data} </div>
+                  `);
+
+                  e.setAttribute("onclick", `actionImage(this,${id}, '${newType}');`);
+                  e.setAttribute("id", `icon-${newType}`);
+    
+                // data = JSON.parse(data);
+    
+                }
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = xhr.status + ': ' + xhr.statusText
+                // alert('Error - ' + errorMessage);
+                $("#message").html(`
+              <div class="alert alert-danger" role="alert">Error - ${errorMessage} </div>
+            `);
+            }
+    
+        });
+
+
+        function setAttributes(el, attrs) {
+            for(var key in attrs) {
+              el.setAttribute(key, attrs[key]);
+            }
+          }
+
+    
+    }
 }
 
 

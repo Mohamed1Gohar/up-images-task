@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "insert into uploading (name,path) values ('$name','$path')";
                 $op = mysqli_query($con, $sql);
                 if ($op) {
-                    
+
                     $id = mysqli_insert_id($con);
 
                     $data = [
@@ -66,31 +66,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id = intval($_POST['id']);
         $action_type = $_POST['actionType'];
 
-        if ($action_type == 'approval') {
+        $sql = "select * from uploading where id = $id";
+        $op = mysqli_query($con, $sql);
+        $op = mysqli_num_rows($op) == 1 ? true : false;
+
+        if ($action_type == 'approval' && $op) {
+            
             $sql = "UPDATE `uploading` SET status='approved' where id= $id";
             $op = mysqli_query($con, $sql);
-
             if ($op) {
                 echo 'Success Image Approved !';
             } else {
                 echo 'error try again ' . mysqli_error($con);
             }
-        } elseif ($action_type == 'rejection') {
 
+        } elseif ($action_type == 'rejection' && $op) {
 
-            $sql = "select * from uploading where id = $id";
+            $now = date("Y-m-d H:m:s");
+            $sql = "UPDATE `uploading` SET status='rejected', deleted_at='$now' where id= $id";
             $op = mysqli_query($con, $sql);
 
-            if (mysqli_num_rows($op) == 1) {
-                $sql = "delete from uploading where id= $id";
-                $op = mysqli_query($con, $sql);
-                if ($op) {
-                    $message = ["message " => "the user is removed"];
-                    echo 'this Image Is Removed';
-                } else {
-                    echo 'error try again ' . mysqli_error($con);
-                }
+            if ($op) {
+                $message = ["message " => "the user is removed"];
+                echo 'this Image Is Removed';
+            } else {
+                echo 'error try again ' . mysqli_error($con);
             }
+            
         }
 
         exit;
